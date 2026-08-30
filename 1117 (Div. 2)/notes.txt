@@ -1,4 +1,0 @@
-Problem B
-- Look for cancellation when repeatedly processing consecutive differences.
-- I focused on simulating how the height changes between mountains.
-- I didn't initially ask: "What is the TOTAL decrease after crossing all mountains?"
