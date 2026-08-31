@@ -1,0 +1,17 @@
+mutex + lock_guard gives you the same mutex protection while making the locking/unlocking exception-safe and scope-based.
+
+lock_guard doesn't give convenient manual control over its ownership.
+
+uniue_lock<mutex>: We can manually lock and unlock as convenient while automatic unlock facility for raii.
+
+unique_lock can start unlocked: unique_lock<mutex> lock(m, defer_lock).
+
+try_lock(): Tries to get lock , instead of waiting indefinately for the mutex to acquire it, if acquired returns true, else false.
+
+Unique_lock() is an object that owns the locking responsiblity,l not ownership of the object itself.
+
+Once unlocked, unique_lock doesn't own the lock, once locked again unique_lock again has the locking responsiblity.
+
+For unique_lock to give up responsiblity of lock we do lock.release().
+
+A condition_variable is used to avoid busy waiting. Busy waiting repeatedly checks a condition and wastes CPU cycles. A condition_variable allows a thread to sleep/block until another thread notifies it that the condition may have changed.
