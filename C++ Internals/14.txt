@@ -1,0 +1,15 @@
+thread.join() means: Main thread, wait here until this thread finishes.
+
+thread.detach() means: Run this thread independently, I won't wait for this, after detaching can't join later.
+
+If detached thread later tires to access the variable it can get undefined behaviour, so its potentially dangerous.
+
+Passing argument to threads thread worker(add, 2, 3).
+
+For passing by ref, thread worker(add, ref(x), ref(y));
+
+So two threads can manipulate data item at same time so make such critical data items atomic<bool>
+
+mutex m, only one thread can enter critical section at once.
+
+So thread.join(), is for main thread to wait for the thread to finish.
