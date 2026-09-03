@@ -2,11 +2,11 @@ mutex + lock_guard gives you the same mutex protection while making the locking/
 
 lock_guard doesn't give convenient manual control over its ownership.
 
-uniue_lock<mutex>: We can manually lock and unlock as convenient while automatic unlock facility for raii.
+unique_lock<mutex>: We can manually lock and unlock as convenient while automatic unlock facility for raii.
 
 unique_lock can start unlocked: unique_lock<mutex> lock(m, defer_lock).
 
-try_lock(): Tries to get lock , instead of waiting indefinately for the mutex to acquire it, if acquired returns true, else false.
+try_lock(): Tries to get lock, instead of waiting indefinately for the mutex to acquire it, if acquired returns true, else false.
 
 Unique_lock() is an object that owns the locking responsiblity,l not ownership of the object itself.
 

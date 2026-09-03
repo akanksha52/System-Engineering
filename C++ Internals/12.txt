@@ -8,7 +8,7 @@ The preprocessor handles preprocessor directives such as #define and #include. I
 
 Produce preprocessed file by command: g++ -E main.cpp, to save it use command: g++ -E main.cpp -o mail.l 
 
-hpp files contaisn the declarations of the things used throughout the project/
+hpp files contaisn the declarations of the things used throughout the project/.
 
 A translation unit is the source file after the preprocessor has finished processing it. It contains the original source code along with the expanded macros and the contents of all included header files. This preprocessed translation unit is then passed to the compiler for compilation.
 
@@ -16,12 +16,8 @@ A translation unit is the source file after the preprocessor has finished proces
 
 Compliation involves parsing, type checking, semantic analysis, generating machine oriented code, optimisation, it produces assembly code, to do compilation g++ -S main.cpp
 
-A more accurate version:
-
 .hpp files (C++ header files) generally contain declarations of classes, functions, variables, templates, constants, etc., that are intended to be used across different source files in a project. They allow multiple .cpp files to know about these entities without putting their full definitions in every source file.
-
 For example:
-
 // Math.hpp
 int add(int a, int b);   // declaration
 // Math.cpp
@@ -30,77 +26,45 @@ int add(int a, int b) {  // definition
 }
 // main.cpp
 #include "Math.hpp"
-
 int main() {
     add(2, 3);
 }
-
 Easy distinction:
-
 .hpp → what exists / declarations
 .cpp → how it works / definitions
-
 Though in real C++, .hpp files can also contain definitions, especially for templates, inline functions, and class member functions defined inside the class.
-
 why defintion also not in hpp?
-
 Actually, definitions can be in .hpp files. The reason we often separate them is mainly to avoid multiple-definition problems and to keep compilation organized.
-
 Suppose:
-
 // Math.hpp
 int add(int a, int b) {
     return a + b;
 }
-
 And both main.cpp and test.cpp do:
-
 #include "Math.hpp"
-
 Remember: #include essentially copies the header's contents into each .cpp file during preprocessing.
-
 So the compiler effectively sees:
-
 main.cpp → definition of add()
 test.cpp → definition of add()
-
 Then, when linking, there can be multiple definitions of add() → linker error.
-
 That's why we commonly do:
-
 // Math.hpp
 int add(int a, int b);   // declaration
 // Math.cpp
 int add(int a, int b) {  // definition
     return a + b;
 }
-
 Now every .cpp file can know that add() exists, but there is only one actual definition compiled.
-
 But there are important exceptions
-
 Definitions do belong in headers in several cases:
-
 // Math.hpp
 inline int add(int a, int b) {
     return a + b;
 }
-
 inline allows the same definition to appear in multiple translation units.
 
-Also:
-
-Templates → definitions generally need to be in the header.
-Class member functions defined inside the class → commonly in .hpp.
-Header-only libraries → implementations are intentionally in headers.
-
-So don't memorize ".hpp = declarations, .cpp = definitions" as an absolute rule.
-
 A better mental model is:
-
 .hpp exposes an interface and may also contain definitions that are safe/necessary to include in multiple translation units. .cpp usually contains definitions that should exist in only one translation unit.
-
-give answer in breif ins entence
 
 .hpp files can contain definitions too, but we usually put shared declarations there and keep non-inline definitions in .cpp files to avoid multiple-definition errors. as the headers are copied into the source files it is included in, so there can be multiple definition error if we put definition in the hpp file.
 
@@ -110,153 +74,47 @@ Object file contains the machine code for the particular source file, packaged w
 
 A symbol is a named entity that the object/linking system needs to keep track of, function definition creates the symbol and wherever it is called a ref to that symbol is created.
 
-Tolink object files into an executable command is: g++ a.o b.o -o app 
-
-Actually, definitions can be in .hpp files. The reason we often separate them is mainly to avoid multiple-definition problems and to keep compilation organized.
-
-Suppose:
-
-// Math.hpp
-int add(int a, int b) {
-    return a + b;
-}
-
-And both main.cpp and test.cpp do:
-
-#include "Math.hpp"
-
-Remember: #include essentially copies the header's contents into each .cpp file during preprocessing.
-
-So the compiler effectively sees:
-
-main.cpp → definition of add()
-test.cpp → definition of add()
-
-Then, when linking, there can be multiple definitions of add() → linker error.
-
-That's why we commonly do:
-
-// Math.hpp
-int add(int a, int b);   // declaration
-// Math.cpp
-int add(int a, int b) {  // definition
-    return a + b;
-}
-
-Now every .cpp file can know that add() exists, but there is only one actual definition compiled.
-
-But there are important exceptions
-
-Definitions do belong in headers in several cases:
-
-// Math.hpp
-inline int add(int a, int b) {
-    return a + b;
-}
-
-inline allows the same definition to appear in multiple translation units.
-
-Also:
-
-Templates → definitions generally need to be in the header.
-Class member functions defined inside the class → commonly in .hpp.
-Header-only libraries → implementations are intentionally in headers.
-
-So don't memorize ".hpp = declarations, .cpp = definitions" as an absolute rule.
-
-A better mental model is:
-
-.hpp exposes an interface and may also contain definitions that are safe/necessary to include in multiple translation units. .cpp usually contains definitions that should exist in only one translation unit.
-
-give answer in breif ins entence
-
-.hpp files can contain definitions too, but we usually put shared declarations there and keep non-inline definitions in .cpp files to avoid multiple-definition errors.
+To link object files into an executable command is: g++ a.o b.o -o app 
 
 Compiling files seprately is particularly useful in big projects because only the outdated files and their dependent files are complied again rest stays same.
 
 Compiling files separately is particularly useful in large projects because only modified files and the files that depend on them need to be recompiled, while the rest remain unchanged as a result of which compilation time is saved.
 
-GNU make uses dependency grpah to find out which targets need rebuilding.
+GNU make uses dependency graph to find out which targets need rebuilding.
 
 Linker combines object files, resolves symbols, resolves library references, produces the executable or library
 
 A static library is basically a collection of already-compiled .o (object) files packaged into a single file, usually ending in .a on Linux. Its required code is copied into your executable during linking.
 
-I think you mean screen? If you're asking about .a / static libraries and a command like:
-
-g++ main.o -lbase -lcef -o app
-
-here's the core idea.
-
+command like: g++ main.o -lbase -lcef -o app
 Static library
-
 A static library is a collection of already-compiled object files (.o) packaged into one file.
+On Linux: libcef.a. The naming convention is: lib<name>.a
+-lbase means: Find and link the library named libbase.a.
 
-On Linux:
+g++ main.o -lbase -lcef -o app tells the linker:
+1. Take main.o.
+2. Find libbase.a and link the required code from it.
+3. Find libcef.a and link the required code from it.
+4. Combine everything into an executable called app.
 
-libbase.a
-libcef.a
 
-The naming convention is:
-
-lib<name>.a
-
-So:
-
--lbase
-
-means:
-
-Find and link the library named libbase.a.
-
-What this command does
-g++ main.o -lbase -lcef -o app
-
-It tells the linker:
-
-Take main.o.
-Find libbase.a and link the required code from it.
-Find libcef.a and link the required code from it.
-Combine everything into an executable called app.
-
-Conceptually:
-
-main.cpp
-   ↓ compile
-main.o
-   ↓
-   ├── libbase.a
-   └── libcef.a
-          ↓
-       LINKER
-          ↓
-        app
 Why do we need libraries?
-
 Suppose:
-
 // main.cpp
 #include "math.hpp"
-
 int main() {
     add(2, 3);
 }
-
 main.cpp only knows the declaration:
-
 int add(int, int);
-
 But the actual implementation might be inside:
-
 libmath.a
-
 During linking:
-
 g++ main.o -lmath -o app
-
 the linker finds the actual implementation of add() in libmath.a.
 
-One important distinction
+Important distinction:
 .hpp       → declarations
 .cpp       → definitions
 .o         → compiled definitions
@@ -264,101 +122,12 @@ One important distinction
 executable → linked result
 
 So:
-
 .cpp → compiler → .o
 .o + .a → linker → executable
 
 And static means the required library code is copied into the final executable at link time. You generally don't need the .a file when running the resulting executable.
 
-What is the, static library? What's the static library? And for example, g++ main.o -l dotsbase -l cef -O app. What does it do? And yeah, tell me everything related to it.  
-
-A static library is basically a collection of already-compiled .o (object) files packaged into a single file, usually ending in .a on Linux.
-
-For example:
-
-libbase.a
-
-can contain:
-
-file1.o
-file2.o
-file3.o
-Your command
-
-I think you mean:
-
-g++ main.o -lbase -lcef -o app
-
-Here:
-
-g++ → invokes the C++ compiler/linker
-main.o → your already-compiled object file
--lbase → tells the linker to use libbase.a (or a shared library such as libbase.so)
--lcef → tells it to use libcef.a / libcef.so
--o app → name the output executable app
-
-So essentially:
-
-             ┌── libbase.a
-main.o ──────┼── libcef.a
-             │
-             ↓
-           LINKER
-             ↓
-            app
-Why do we need a static library?
-
-Suppose you have:
-
-// math.hpp
-int add(int, int);
-// math.cpp
-int add(int a, int b) {
-    return a + b;
-}
-
-You compile:
-
-g++ -c math.cpp
-
-giving:
-
-math.o
-
-You could directly link it:
-
-g++ main.o math.o -o app
-
-But if you have many related .o files, you can package them:
-
-ar rcs libmath.a math.o
-
-Now you have:
-
-libmath.a
-
-and can link with:
-
-g++ main.o -lmath -o app
-Static vs dynamic library
-
-Static library:
-
-libmath.a
-
-Its required code is copied into your executable during linking.
-
-main.o + libmath.a
-       ↓
-    executable
-
-Dynamic/shared library:
-
-libmath.so
-
-The library remains separate, and the executable refers to it.
-
-executable ─────→ libmath.so
+Dynamic/shared library: libmath.so: The library remains separate, and the executable refers to it.
 
 So the simple mental model is:
 

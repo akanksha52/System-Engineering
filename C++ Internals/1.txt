@@ -1,4 +1,4 @@
-A compound type is a type that is defined in terms of another type. C++ has several compound types, two of which—references and pointers
+A compound type is a type that is defined in terms of another type. C++ has several compound types, two of which are references and pointers
 
 There is no way to rebind a reference to refer to a different object. Because there is no way to rebind a reference, references must be initialized
 

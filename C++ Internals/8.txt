@@ -1,5 +1,5 @@
 An lvalue is an expression that refers to a persistent memory location (e.g., a named variable), while an rvalue is a temporary value without a stable address (e.g., literals or results of expressions).
 
-Static used iwth getVlaue2 as if itwas normal int t would be destroyed when function returns hence its imp to keep it static
+Static used with getVlaue2 as if it was normal int it would be destroyed when function returns hence its imp to keep it static.
 
-Forst getVlaue is wrong as it returns ref but the return value dies after function ends so it leads to dangling refll
+First getVlaue is wrong as it returns ref but the return value dies after function ends so it leads to dangling ref.

@@ -18,7 +18,7 @@ cmake -G Ninja -B build
 
 There are different build configuration debug, Release et we use for different purpose.
 
-Single-config: Choose the build typewhen configuring cmake.
+Single-config: Choose the build type when configuring cmake.
 Command is: cmake -S . -B build -DCMAKE_BUILD_TYPE=debug
 
 Multi-config: Several configuration available in the same build directory then while building we choose the one when building.
@@ -36,7 +36,7 @@ CMake needs a way to describe a group of header files belonging to a target. Tha
 
 BASE_DIRS include. basically tells CMake: This is the directory from which these headers should be discoverable.
 
-target_link_lobraries command link the target to the lobraries it uses.
+target_link_libraries command link the target to the lobraries it uses.
 
 PRIVATE: Only the target needs the library.
 
@@ -48,6 +48,6 @@ We can write link librares command before add library, CMake doesn't execute the
 
 add_subdirectory() tells CMake to go into this subdirectory and process the CMakeLists.txt file there too.
 
-project() simply gives iverall CMake project a name.
+project() simply gives overall CMake project a name.
 
 target_include_directories() helps the compiler to find the header file. When compiling this target, search these directories for header files. For the target, headers/ is an include directory, and make this include path available to consumers of targets too.
