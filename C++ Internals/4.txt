@@ -1,0 +1,11 @@
+On the other hand, even though sz is a const, the value of its initializer is not known until run time. Hence, sz is not a constant expression.
+
+We can ask the compiler to verify that a variable is a constant expression by declaring the variable in a constexpr declaration. Variables declared as constexpr are implicitly const and must be initialized by constant expressions
+
+The types we can use in a constexpr are known as “literal types” because they are simple enough to have literal values.
+
+Pointers and references can be constexpr, but what they refer/point to is restricted.A constexpr pointer can be initialized with: nullptr, literal 0, address of an object having a fixed address. A constexpr reference can bind to an object having a fixed address.
+
+Ordinary local variables inside a function → generally not fixed-address → cannot be used for constexpr pointer/reference. Objects defined outside functions (global objects) → fixed address → can be used. Static local variables → exist across function calls and have fixed addresses → can be used.
+
+Constexpr adds a top-level const to the declared object.

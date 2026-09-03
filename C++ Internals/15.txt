@@ -15,3 +15,16 @@ Once unlocked, unique_lock doesn't own the lock, once locked again unique_lock a
 For unique_lock to give up responsiblity of lock we do lock.release().
 
 A condition_variable is used to avoid busy waiting. Busy waiting repeatedly checks a condition and wastes CPU cycles. A condition_variable allows a thread to sleep/block until another thread notifies it that the condition may have changed.
+
+cv.notify_one() means: Something changed. One waiting thread should wake up and check.
+
+cv.wait(lock) effectively does:
+1. Unlock mutex 🔓
+2. Put worker to sleep 😴
+3. Wait for notification
+4. Wake up
+5. Lock mutex again 🔒
+6. Continue
+
+Atomic → simple independent shared state / individual atomic operations.
+Mutex → multiple operations that must be treated as one unit or multiple related variables.

@@ -2,9 +2,16 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
+#include <queue>
+#include <atomic>
 using namespace std;
 static int x = 0, y = 0;
-mutex m, n, p, q;
+mutex m, n, p, q, r, s, u, v;
+condition_variable cv;
+bool ready = false;
+queue<int> t;
+atomic<int> w;
 // Value of x is not sure.
 void doWork1()
 {
@@ -63,9 +70,53 @@ void doWork6()
 {
     unique_lock<mutex> lock(m);
     lock.unlock();
-    lock.release()      // Now unique_lock is not rsponsible
+    lock.release();      // Now unique_lock is not rsponsible
     return;
 } 
+void doWork7()
+{
+    unique_lock<mutex> lock(r);
+    cv.wait(lock, [] {
+        return ready;
+    });
+    cout << "Worker can now proceed\n";
+}
+void doWork8()
+{
+    {
+        lock_guard<mutex> lock(r);
+        ready = true;
+    }
+    cv.notify_one();
+}
+void doWork9()
+{
+    {
+        lock_guard<mutex> lock(s);
+        t.push(10);
+    }
+    cv.notify_one();
+}
+void doWork10()
+{
+    unique_lock<mutex> lock(s);
+    cv.wait(lock, [] {
+        return !t.empty();
+    });
+    int value = t.front(); t.pop();
+    cout << value << endl;
+}
+// To avoid deadlock
+void doWork11()
+{
+    scoped_lock lock(u, v);
+    return;
+}
+void doWork12()
+{
+    for(int i=0 ; i<10 ; i++) w++;
+    return;
+}
 int main()
 {
     thread t1(doWork1);
@@ -94,5 +145,18 @@ int main()
     thread t10(doWork5);
     t9.join();
     t10.join();
+    thread t11(doWork7);
+    thread t12(doWork8);
+    t11.join();
+    t12.join();
+    thread t13(doWork9);
+    thread t14(doWork10);
+    t13.join();
+    t14.join();
+    thread t15(doWork12);
+    thread t16(doWork12);
+    t15.join();
+    t16.join();
+    cout<<w<<endl;
     return 0;
 }
