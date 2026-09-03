@@ -1,0 +1,79 @@
+Buffer(const Buffer& other): & → don't create another copy, const → don't modify the source.
+
+Copy assigment copies into an already existing object.
+cpp
+Buffer b1;
+Buffer b2;
+b2 = b1;
+Form: Buffer& operator=(const Buffer& other);
+
+Usually needs:
+1. Handle self-assignment
+2. Release old resource
+3. Allocate new resource
+4. Copy data
+5. Return `*this`
+
+Shallow Copy: Default copy, new object points to the resources of old object.
+Problems:
+* Two objects own the same allocation
+* Modifying one affects the other
+* Both destructors may `delete` the same memory
+* double free / undefined behavior
+
+Deep Copy: allocate separate memory:
+
+Rule of 3: If your class manually manages a resource and needs one of these: ~Buffer(), Buffer(const Buffer&), Buffer& operator=(const Buffer&) you probably need all 3, as if you manually manage ownership, default copying is often wrong.
+
+Rule of 3: Destructor + Copy Constructor + Copy Assignment
+
+lvalue has a persistent identity. You can refer to it again.
+rvalue is temporary / expiring value
+
+T&& is an rvalue reference: 
+const Buffer&   // copy from source
+Buffer&&        // move from source
+
+std::move(): Does not move anything. It essentially casts/marks `x` as an rvalue so that a move operation can be selected.
+
+Used when creating a new object from an rvalue. Instead of allocating/copying: b1 ──> [large memory], transfer ownership: b2 ──> [large memory], b1 ──> nullptr
+
+Move Assignment: Existing object receives resources from another object.
+1. Free b2's old resource
+2. Steal b1's resource
+3. Give b1 an empty/null state
+4. return *this
+
+Moved-from Object: Buffer b2 = std::move(b1). b1 is not necessarily null.
+
+Important correction:
+
+A moved-from object is valid but its state is generally unspecified, unless the class specifies something stronger. But **C++ does not universally require `std::move` to make objects null.
+
+Rule of 5: If a class manually manages a resource, the Rule of 5 says consider:
+~Buffer();                         // 1
+Buffer(const Buffer&);             // 2
+Buffer& operator=(const Buffer&);  // 3
+Buffer(Buffer&&);                  // 4
+Buffer& operator=(Buffer&&);       // 5
+
+Rule of 0: Don't manually manage resources yourself, Use RAII types. The standard library handles it.
+
+| Function         | Situation              | What happens                  |
+| ---------------- | ---------------------- | ----------------------------- |
+| Constructor      | New object             | Allocate                      |
+| Destructor       | Object dies            | Free                          |
+| Copy constructor | New object ← existing  | **Deep copy**                 |
+| Copy assignment  | Existing ← existing    | Free old + **deep copy**      |
+| Move constructor | New object ← temporary | **Steal resource**            |
+| Move assignment  | Existing ← temporary   | Free old + **steal resource** |
+
+COPY: I need my own resource: allocate + copy
+
+MOVE: I can take your resource, steal pointer + empty source
+
+std::move: doesn't move, enables move
+
+Copy constructor: creates NEW object
+
+Copy assignment: assigns to EXISTING object
